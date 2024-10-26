@@ -1,0 +1,53 @@
+services:
+  app:
+    container_name: Pastebin-backed-service-post-app
+    restart: always
+    env_file: .env
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '${APP_PORT}:${APP_PORT}'
+    environment:
+      DB_HOST: database
+      REDIS_PORT: 6379
+      REDIS_HOST: redis
+    networks:
+      - pastebin
+    depends_on:
+      - redis
+      - database
+
+  redis:
+    container_name: Pastebin-backed-service-post-redis
+    restart: always
+    env_file: .env
+    image: 'redis:7.2.1-alpine'
+    ports:
+      - '${REDIS_PORT}:6379'
+    networks:
+      - pastebin
+
+  database:
+    container_name: Pastebin-backed-service-post-database
+    restart: always
+    env_file: .env
+    image: postgres:12.17
+    ports:
+      - ${DB_PORT}:5432
+    environment:
+      POSTGRES_HOST: ${DB_HOST}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    volumes:
+      - pastebin_database:/var/lib/postgresql/data
+    networks:
+      - pastebin
+
+volumes:
+  pastebin_database:  # Добавлено определение тома
+
+networks:
+  pastebin:
+    external: true

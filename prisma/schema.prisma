@@ -1,0 +1,21 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Posts {
+  id                 String   @id @default(uuid()) // Поле для уникального идентификатора (UUID)
+  authorId           String   // Поле для идентификатора автора
+  avatarAuthorUrl    String   // Поле для идентификатора автора
+  nameAuthor         String   // Поле для идентификатора автора
+  contentUrl         String   // Поле для URL контента
+  createdAt          DateTime @default(now()) // Поле для времени создания записи
+  updatedAt          DateTime @updatedAt      // Поле для времени последнего обновления записи
+
+  @@map("posts")
+}
+
